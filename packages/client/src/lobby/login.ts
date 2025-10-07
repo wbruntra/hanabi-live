@@ -9,6 +9,7 @@ import { FADE_TIME_MS } from "../constants";
 import { getHTMLElement, getHTMLInputElement, getURLFromPath } from "../utils";
 import { websocketInit } from "../websocketInit";
 import * as nav from "./nav";
+import { replaceNavigationState } from "./navigationState";
 import { tablesDraw } from "./tablesDraw";
 import { Screen } from "./types/Screen";
 import * as usersDraw from "./usersDraw";
@@ -235,6 +236,9 @@ export function hide(firstTimeUser: boolean): void {
   // not be centered.
   nav.show("lobby");
   $("#lobby-chat-input").trigger("focus");
+
+  // Initialize navigation state for the lobby.
+  replaceNavigationState({ screen: Screen.Lobby });
 
   // Scroll to the bottom of the chat. (This is necessary if we are going to the lobby after the
   // tutorial.)

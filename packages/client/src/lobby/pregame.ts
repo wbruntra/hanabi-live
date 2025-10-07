@@ -13,6 +13,7 @@ import {
   timerFormatter,
 } from "../utils";
 import * as nav from "./nav";
+import { pushNavigationState } from "./navigationState";
 import { tablesDraw } from "./tablesDraw";
 import { Screen } from "./types/Screen";
 import * as usersDraw from "./usersDraw";
@@ -66,6 +67,9 @@ export function show(): void {
 
   // Set the browser address bar.
   setBrowserAddressBarPath(`/pre-game/${globals.tableID}`);
+
+  // Push navigation state so back button works.
+  pushNavigationState({ screen: Screen.PreGame });
 }
 
 export function hide(): void {

@@ -7,6 +7,7 @@ import { globals } from "../Globals";
 import * as tooltips from "../tooltips";
 import { dateTimeFormatter, timerFormatter } from "../utils";
 import * as nav from "./nav";
+import { pushNavigationState } from "./navigationState";
 import { tablesDraw } from "./tablesDraw";
 import type { GameHistory } from "./types/GameHistory";
 import { Screen } from "./types/Screen";
@@ -34,6 +35,15 @@ export function init(): void {
 }
 
 export function show(): void {
+  showInternal(true);
+}
+
+// Version of show() that doesn't push history state. Used when navigating via back/forward buttons.
+export function showWithoutPush(): void {
+  showInternal(false);
+}
+
+function showInternal(pushState: boolean) {
   globals.currentScreen = Screen.History;
 
   $("#lobby-history").show();
@@ -53,6 +63,11 @@ export function show(): void {
   // It might be hidden if we are returning from the "Show History of Friends" view.
   $("#lobby-history-show-all").show();
   $("#lobby-history-show-all").attr("href", `/history/${globals.username}`);
+
+  // Push navigation state so back button works.
+  if (pushState) {
+    pushNavigationState({ screen: Screen.History });
+  }
 
   // Draw the history table.
   draw(false);
@@ -207,10 +222,25 @@ function makeOtherScoresButton(id: number, seed: string, gameCount: number) {
 }
 
 export function showFriends(): void {
+  showFriendsInternal(true);
+}
+
+// Version of showFriends() that doesn't push history state.
+export function showFriendsWithoutPush(): void {
+  showFriendsInternal(false);
+}
+
+function showFriendsInternal(pushState: boolean) {
   globals.currentScreen = Screen.HistoryFriends;
   nav.show("history-friends");
   $("#lobby-history-table-players").html("Players");
   $("#lobby-history-show-all").hide();
+
+  // Push navigation state so back button works.
+  if (pushState) {
+    pushNavigationState({ screen: Screen.HistoryFriends, friends: true });
+  }
+
   draw(true);
 }
 
@@ -227,6 +257,9 @@ function showOtherScores() {
   $("#lobby-history").hide();
   $("#lobby-history-other-scores").show();
   nav.show("history-other-scores");
+
+  // Push navigation state so back button works.
+  pushNavigationState({ screen: Screen.HistoryOtherScores });
 }
 
 function hideOtherScores() {

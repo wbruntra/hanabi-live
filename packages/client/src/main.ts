@@ -16,6 +16,7 @@ import { lobbyKeyboardInit } from "./lobby/lobbyKeyboardInit";
 import { lobbyTutorialInit } from "./lobby/lobbyTutorialInit";
 import * as lobbyLogin from "./lobby/login";
 import * as lobbyNav from "./lobby/nav";
+import * as lobbyNavigationInit from "./lobby/navigationInit";
 import * as playerSettings from "./lobby/playerSettings";
 import { Screen } from "./lobby/types/Screen";
 import * as lobbyWatchReplay from "./lobby/watchReplay";
@@ -65,6 +66,7 @@ $(document).ready(() => {
   lobbyKeyboardInit();
   lobbyLogin.init();
   lobbyNav.init();
+  lobbyNavigationInit.init();
   playerSettings.init();
   lobbyTutorialInit();
   lobbyWatchReplay.init();
