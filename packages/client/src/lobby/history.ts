@@ -5,7 +5,7 @@ import { getVariant } from "@hanabi-live/game";
 import { OptionIcons } from "../enums/OptionIcons";
 import { globals } from "../Globals";
 import * as tooltips from "../tooltips";
-import { dateTimeFormatter, setBrowserAddressBarPath, timerFormatter } from "../utils";
+import { dateTimeFormatter, pushBrowserHistoryState, setBrowserAddressBarPath, timerFormatter } from "../utils";
 import * as nav from "./nav";
 import { tablesDraw } from "./tablesDraw";
 import type { GameHistory } from "./types/GameHistory";
@@ -60,9 +60,9 @@ export function show(): void {
    */
   if (!globalThis.location.pathname.startsWith("/history")) {
     // We're navigating from somewhere else (e.g., lobby), so push the current state first.
-    setBrowserAddressBarPath("/lobby");
+    pushBrowserHistoryState("/lobby");
   }
-  setBrowserAddressBarPath("/history");
+  pushBrowserHistoryState("/history");
 
   // Draw the history table.
   draw(false);

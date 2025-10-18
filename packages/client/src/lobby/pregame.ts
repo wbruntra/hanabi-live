@@ -9,6 +9,7 @@ import { OptionIcons } from "../enums/OptionIcons";
 import * as tooltips from "../tooltips";
 import {
   getHTMLElement,
+  pushBrowserHistoryState,
   setBrowserAddressBarPath,
   timerFormatter,
 } from "../utils";
@@ -70,9 +71,9 @@ export function show(): void {
    */
   if (!globalThis.location.pathname.startsWith("/pre-game/")) {
     // We're navigating from somewhere else (e.g., lobby), so push the current state first.
-    setBrowserAddressBarPath("/lobby");
+    pushBrowserHistoryState("/lobby");
   }
-  setBrowserAddressBarPath(`/pre-game/${globals.tableID}`);
+  pushBrowserHistoryState(`/pre-game/${globals.tableID}`);
 }
 
 export function hide(): void {
