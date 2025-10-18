@@ -5,7 +5,7 @@ import { getVariant } from "@hanabi-live/game";
 import { OptionIcons } from "../enums/OptionIcons";
 import { globals } from "../Globals";
 import * as tooltips from "../tooltips";
-import { dateTimeFormatter, timerFormatter } from "../utils";
+import { dateTimeFormatter, pushBrowserHistoryState, setBrowserAddressBarPath, timerFormatter } from "../utils";
 import * as nav from "./nav";
 import { tablesDraw } from "./tablesDraw";
 import type { GameHistory } from "./types/GameHistory";
@@ -54,6 +54,16 @@ export function show(): void {
   $("#lobby-history-show-all").show();
   $("#lobby-history-show-all").attr("href", `/history/${globals.username}`);
 
+  /**
+   * Set the browser address bar. If we're navigating from the lobby, ensure there's a lobby state
+   * in history so the back button can return to it.
+   */
+  if (!globalThis.location.pathname.startsWith("/history")) {
+    // We're navigating from somewhere else (e.g., lobby), so push the current state first.
+    pushBrowserHistoryState("/lobby");
+  }
+  pushBrowserHistoryState("/history");
+
   // Draw the history table.
   draw(false);
 }
@@ -70,6 +80,9 @@ export function hide(): void {
   $("#lobby-bottom-half").removeClass("hidden");
   $("#lobby-small-screen-buttons").removeClass("hidden");
   nav.show("lobby");
+  
+  // Set the browser address bar back to lobby.
+  setBrowserAddressBarPath("/lobby");
 }
 
 export function draw(friends: boolean): void {

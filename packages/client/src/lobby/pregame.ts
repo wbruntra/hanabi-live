@@ -9,6 +9,7 @@ import { OptionIcons } from "../enums/OptionIcons";
 import * as tooltips from "../tooltips";
 import {
   getHTMLElement,
+  pushBrowserHistoryState,
   setBrowserAddressBarPath,
   timerFormatter,
 } from "../utils";
@@ -64,8 +65,15 @@ export function show(): void {
   toggleStartGameButton();
   toggleJoinSpectateButtons();
 
-  // Set the browser address bar.
-  setBrowserAddressBarPath(`/pre-game/${globals.tableID}`);
+  /**
+   * Set the browser address bar. If we're navigating from the lobby, ensure there's a lobby state
+   * in history so the back button can return to it.
+   */
+  if (!globalThis.location.pathname.startsWith("/pre-game/")) {
+    // We're navigating from somewhere else (e.g., lobby), so push the current state first.
+    pushBrowserHistoryState("/lobby");
+  }
+  pushBrowserHistoryState(`/pre-game/${globals.tableID}`);
 }
 
 export function hide(): void {
@@ -103,7 +111,7 @@ export function hide(): void {
   // Remove delegate handlers
   $("#lobby-chat-pregame-text").off();
 
-  // Set the browser address bar.
+  // Set the browser address bar back to lobby.
   setBrowserAddressBarPath("/lobby");
 }
 

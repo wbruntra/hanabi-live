@@ -5,6 +5,7 @@ import { DOMAIN, OLD_DOMAIN } from "@hanabi-live/data";
 import jquery from "jquery";
 import { globals } from "./Globals";
 import { Loader } from "./Loader";
+import * as browserNavigation from "./browserNavigation";
 import * as chat from "./chat";
 import { initErrorListener } from "./errors";
 import * as gameChat from "./game/chat";
@@ -69,6 +70,7 @@ $(document).ready(() => {
   lobbyTutorialInit();
   lobbyWatchReplay.init();
   sounds.init();
+  browserNavigation.init();
 
   // Start preloading some images that we will need for when a game starts.
   globals.imageLoader = new Loader();

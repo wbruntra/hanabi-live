@@ -67,6 +67,34 @@ export function setBrowserAddressBarPath(newPath: string, hash?: string): void {
   globalThis.history.replaceState(undefined, "", path);
 }
 
+/**
+ * Push a new browser history state (for pregame/history navigation). This creates a new history
+ * entry that allows the back button to navigate to previous states.
+ */
+export function pushBrowserHistoryState(newPath: string, hash?: string): void {
+  // Combine the path (e.g. "/") with the query string parameters (e.g. "?dev")
+  const queryParameters = new URLSearchParams(globalThis.location.search);
+  const modifiedQueryParameters = queryParameters
+    .toString()
+    // "URLSearchParams.toString()" will convert "?dev" to "?dev=", which is undesirable.
+    .replaceAll("=&", "&")
+    .replace(/=$/, "");
+
+  let path = newPath;
+  if (modifiedQueryParameters !== "") {
+    path += `?${modifiedQueryParameters}`;
+  }
+  if (hash !== undefined) {
+    // e.g. "#123", which is used to show the current turn
+    path += hash;
+  }
+
+  // Only push if the path is different from the current path to avoid duplicate entries.
+  if (path !== globalThis.location.pathname + globalThis.location.search + globalThis.location.hash) {
+    globalThis.history.pushState({ path: newPath }, "", path);
+  }
+}
+
 export function timerFormatter(totalSeconds: number): string {
   const time = new Date();
   time.setHours(0, 0, totalSeconds);
