@@ -8,13 +8,34 @@ export function init(): void {
   // Handle browser back/forward buttons.
   globalThis.addEventListener("popstate", handlePopState);
 
-  // Initialize history state with current path if not already set.
+  /**
+   * Initialize history state with current path if not already set. If we're starting on a non-lobby
+   * page (like /pre-game/123 or /history), ensure there's a lobby state in history so the back
+   * button can return to it.
+   */
+  const currentPath = globalThis.location.pathname;
   if (globalThis.history.state === null) {
-    globalThis.history.replaceState(
-      { path: globalThis.location.pathname },
-      "",
-      globalThis.location.href,
-    );
+    if (currentPath.startsWith("/pre-game/") || currentPath.startsWith("/history")) {
+      // We're starting on a non-lobby page, so push a lobby state first.
+      globalThis.history.replaceState(
+        { path: "/lobby" },
+        "",
+        `/lobby${globalThis.location.search}`,
+      );
+      // Then push the current page state.
+      globalThis.history.pushState(
+        { path: currentPath },
+        "",
+        globalThis.location.href,
+      );
+    } else {
+      // We're starting on the lobby or another page, just set the current state.
+      globalThis.history.replaceState(
+        { path: currentPath },
+        "",
+        globalThis.location.href,
+      );
+    }
   }
 }
 
