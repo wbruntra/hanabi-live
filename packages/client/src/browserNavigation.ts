@@ -4,6 +4,15 @@ import * as lobbyHistory from "./lobby/history";
 import * as lobbyPregame from "./lobby/pregame";
 import { Screen } from "./lobby/types/Screen";
 
+const LOBBY_PATH = "/lobby";
+const PREGAME_PATH_PREFIX = "/pre-game/";
+const HISTORY_PATH_PREFIX = "/history";
+
+/** Check if a path is a non-lobby page that should have a lobby state in history. */
+function isNonLobbyPage(path: string): boolean {
+  return path.startsWith(PREGAME_PATH_PREFIX) || path.startsWith(HISTORY_PATH_PREFIX);
+}
+
 export function init(): void {
   // Handle browser back/forward buttons.
   globalThis.addEventListener("popstate", handlePopState);
@@ -15,12 +24,12 @@ export function init(): void {
    */
   const currentPath = globalThis.location.pathname;
   if (globalThis.history.state === null) {
-    if (currentPath.startsWith("/pre-game/") || currentPath.startsWith("/history")) {
+    if (isNonLobbyPage(currentPath)) {
       // We're starting on a non-lobby page, so push a lobby state first.
       globalThis.history.replaceState(
-        { path: "/lobby" },
+        { path: LOBBY_PATH },
         "",
-        `/lobby${globalThis.location.search}`,
+        `${LOBBY_PATH}${globalThis.location.search}`,
       );
       // Then push the current page state.
       globalThis.history.pushState(
@@ -44,7 +53,7 @@ function handlePopState() {
 
   // Check if we're in a pregame and the back button was pressed.
   if (globals.currentScreen === Screen.PreGame &&
-      !currentPath.startsWith("/pre-game/")) {
+      !currentPath.startsWith(PREGAME_PATH_PREFIX)) {
     // Navigate back to lobby.
     lobbyPregame.hide();
     // Unattend the table when navigating back.
@@ -62,7 +71,7 @@ function handlePopState() {
     (globals.currentScreen === Screen.History ||
       globals.currentScreen === Screen.HistoryFriends ||
       globals.currentScreen === Screen.HistoryOtherScores) &&
-    !currentPath.startsWith("/history")
+    !currentPath.startsWith(HISTORY_PATH_PREFIX)
   ) {
     // Navigate back to lobby.
     lobbyHistory.hide();
@@ -80,7 +89,7 @@ function handlePopState() {
       return;
     }
 
-    if (currentPath.startsWith("/history")) {
+    if (currentPath.startsWith(HISTORY_PATH_PREFIX)) {
       // User navigated forward to history.
       lobbyHistory.show();
     }
